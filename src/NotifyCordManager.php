@@ -131,12 +131,17 @@ class NotifyCordManager
     }
 
     /**
-     * Get the Discord notification channel.
+     * Set channel ID or get Discord notification channel.
      *
-     * @return \NotifyCord\NotifyCord\DiscordChannel
+     * @param string|null $channelId
+     * @return $this|\NotifyCord\NotifyCord\DiscordChannel
      */
-    public function channel()
+    public function channel($channelId = null)
     {
+        if ($channelId !== null) {
+            $this->channelId = $channelId;
+            return $this;
+        }
         return new DiscordChannel($this->http, $this);
     }
 
@@ -553,32 +558,4 @@ class NotifyCordManager
         );
     }
 
-    public function deployment($environment, $version, $deployer, array $additionalFields = [], $webhookUrl = null)
-    {
-        $fields = [
-            'Environment' => $environment,
-            'Version' => $version,
-            'Deployed by' => $deployer,
-            'Date' => date('Y-m-d H:i:s'),
-        ];
-        
-        $fields = array_merge($fields, $additionalFields);
-
-        return $this->sendMessage(
-            '',
-            $webhookUrl,
-            function($message) use ($environment, $fields) {
-                $message->embed(function($embed) use ($environment, $fields) {
-                    $embed->title('🚀 Deployment Completed')
-                         ->description("Application has been successfully deployed to {$environment}")
-                         ->color('#3498db')
-                         ->timestamp();
-                    
-                    foreach ($fields as $name => $value) {
-                        $embed->field($name, (string)$value, true);
-                    }
-                });
-            }
-        );
     }
-}
