@@ -11,6 +11,13 @@ use NotifyCord\NotifyCord\Helpers\MessagePresets;
 class NotifyCordManager
 {
     /**
+     * The channel ID for the current message.
+     *
+     * @var string|null
+     */
+    protected $channelId;
+
+    /**
      * The application instance.
      *
      * @var \Illuminate\Contracts\Foundation\Application
@@ -104,7 +111,23 @@ class NotifyCordManager
      */
     public function message($content = '')
     {
-        return new DiscordMessage($content);
+        $message = new DiscordMessage($content);
+        if ($this->channelId) {
+            $message->setChannelId($this->channelId);
+        }
+        return $message;
+    }
+
+    /**
+     * Set the channel ID for the next message.
+     *
+     * @param string $channelId
+     * @return $this
+     */
+    public function channel($channelId)
+    {
+        $this->channelId = $channelId;
+        return $this;
     }
 
     /**

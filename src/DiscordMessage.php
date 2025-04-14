@@ -7,6 +7,13 @@ use JsonSerializable;
 class DiscordMessage implements JsonSerializable
 {
     /**
+     * The channel ID for this message.
+     *
+     * @var string|null
+     */
+    protected $channelId;
+
+    /**
      * The message content.
      *
      * @var string
@@ -190,12 +197,12 @@ class DiscordMessage implements JsonSerializable
         ];
 
         $styleId = $styleMap[$style] ?? 1;
-        
+
         // Create a row if none exists yet
         if (empty($this->components)) {
             $this->components[] = ['type' => 1, 'components' => []];
         }
-        
+
         // Create button component
         $button = [
             'type' => 2,
@@ -203,17 +210,17 @@ class DiscordMessage implements JsonSerializable
             'style' => $styleId,
             'disabled' => $disabled,
         ];
-        
+
         // URL buttons (style 5) need a URL, others need a custom_id
         if ($styleId === 5 && $url) {
             $button['url'] = $url;
         } else {
             $button['custom_id'] = $customId ?? 'button_' . mt_rand(100000, 999999);
         }
-        
+
         // Add button to the last action row
         $this->components[count($this->components) - 1]['components'][] = $button;
-        
+
         return $this;
     }
 
@@ -225,7 +232,7 @@ class DiscordMessage implements JsonSerializable
     public function addActionRow()
     {
         $this->components[] = ['type' => 1, 'components' => []];
-        
+
         return $this;
     }
 
@@ -237,7 +244,7 @@ class DiscordMessage implements JsonSerializable
     public function incrementRetryCount()
     {
         $this->retryCount++;
-        
+
         return $this;
     }
 
@@ -252,6 +259,28 @@ class DiscordMessage implements JsonSerializable
     }
 
     /**
+     * Set the channel ID for this message.
+     *
+     * @param string $channelId
+     * @return $this
+     */
+    public function setChannelId($channelId)
+    {
+        $this->channelId = $channelId;
+        return $this;
+    }
+
+    /**
+     * Get the channel ID for this message.
+     *
+     * @return string|null
+     */
+    public function getChannelId()
+    {
+        return $this->channelId;
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -261,6 +290,7 @@ class DiscordMessage implements JsonSerializable
         $data = [
             'content' => $this->content,
             'tts' => $this->tts,
+            'channel_id' => $this->channelId,
         ];
 
         if (! empty($this->embeds)) {
