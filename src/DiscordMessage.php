@@ -6,12 +6,15 @@ use JsonSerializable;
 
 class DiscordMessage implements JsonSerializable
 {
-    /**
-     * The channel ID for this message.
-     *
-     * @var string|null
-     */
-    protected $channelId;
+    protected $channelId = null;
+    protected $content = '';
+    protected $embeds = [];
+    protected $tts = false;
+    protected $threadName = null;
+    protected $username = null;
+    protected $avatarUrl = null;
+    protected $components = [];
+    protected $retryCount = 0;
 
     /**
      * The message content.
