@@ -40,6 +40,10 @@ class NotifyCordServiceProvider extends ServiceProvider
         $this->app->singleton('notifycord', function ($app) {
             return new NotifyCordManager($app);
         });
+        
+        $this->app->singleton('discord.shortcuts', function ($app) {
+            return new \NotifyCord\NotifyCord\Helpers\DiscordShortcuts();
+        });
 
         $this->app->singleton(DiscordChannel::class, function ($app) {
             return new DiscordChannel(
@@ -72,6 +76,7 @@ class NotifyCordServiceProvider extends ServiceProvider
     {
         return [
             'notifycord',
+            'discord.shortcuts',
             DiscordChannel::class,
         ];
     }

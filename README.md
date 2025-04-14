@@ -302,6 +302,64 @@ NotifyCord::sendMessage('New signup alert', null, function($message) use ($user)
 });
 ```
 
+### 🌈 Preset Message Styles
+
+NotifyCord offers predefined message styles for common notification types:
+
+```php
+// Success message (green)
+NotifyCord::success(
+    'Backup Completed', 
+    'Database backup was successfully created.',
+    ['Size' => '25.3 MB', 'Location' => 's3://backups/']
+);
+
+// Error message (red)
+NotifyCord::error(
+    'Process Failed', 
+    'Unable to complete the scheduled task.',
+    ['Error Code' => 'ERR-501', 'Time' => now()->format('H:i:s')]
+);
+
+// Warning message (orange)
+NotifyCord::warning(
+    'Disk Space Low', 
+    'Your server is running low on disk space.',
+    ['Used' => '85%', 'Free' => '15 GB']
+);
+
+// Info message (blue)
+NotifyCord::info(
+    'Deployment Started', 
+    'A new deployment process has been initiated.',
+    ['Branch' => 'main', 'Commit' => 'a7d3h1f']
+);
+
+// Server monitoring alert (purple)
+NotifyCord::serverAlert(
+    'Performance Issue', 
+    'High CPU usage detected on web server.',
+    [
+        'CPU' => '92%',
+        'Memory' => '76%',
+        'Load Avg' => '4.56, 4.12, 3.79'
+    ]
+);
+
+// User activity notification (teal)
+NotifyCord::userActivity(
+    'User Signed Up',
+    'A new user has registered on your platform.',
+    'John Doe',
+    'https://example.com/avatars/johndoe.png',
+    [
+        'Email' => 'john@example.com',
+        'Plan' => 'Premium',
+        'Referrer' => 'Google'
+    ]
+);
+```
+
 ### 📱 Mobile App Notifications
 
 ```php
@@ -343,6 +401,65 @@ public function sendServerAlert($system, $metrics)
                  ->footer("Server Monitor", "https://example.com/logo.png");
         });
 }
+```
+
+### 🎨 Advanced Embed Helpers
+
+For specialized embed styles, use the `DiscordEmbedHelper` class:
+
+```php
+use NotifyCord\NotifyCord\Helpers\DiscordEmbedHelper;
+
+// Send an image embed
+NotifyCord::sendMessage('', null, function($message) {
+    $message->embed(
+        DiscordEmbedHelper::imageEmbed(
+            'Beautiful Sunset', 
+            'https://example.com/images/sunset.jpg',
+            '#ff9900'
+        )
+    );
+});
+
+// Send a code snippet
+NotifyCord::sendMessage('', null, function($message) {
+    $message->embed(
+        DiscordEmbedHelper::codeEmbed(
+            'Example PHP Code',
+            'php',
+            '$user = User::find(1);\necho $user->name;',
+            '#8e44ad'
+        )
+    );
+});
+
+// Send a progress bar
+NotifyCord::sendMessage('', null, function($message) {
+    $message->embed(
+        DiscordEmbedHelper::progressEmbed(
+            'Download Progress',
+            75,
+            100,
+            'Downloading...',
+            '#2980b9'
+        )
+    );
+});
+
+// Send a before/after comparison
+NotifyCord::sendMessage('', null, function($message) {
+    $message->embed(
+        DiscordEmbedHelper::comparisonEmbed(
+            'Settings Changed',
+            [
+                'Plan' => ['before' => 'Free', 'after' => 'Premium'],
+                'Storage' => ['before' => '5 GB', 'after' => '50 GB'],
+                'Users' => ['before' => '3', 'after' => 'Unlimited']
+            ],
+            '#16a085'
+        )
+    );
+});
 ```
 
 ## 🐛 Debugging and Troubleshooting

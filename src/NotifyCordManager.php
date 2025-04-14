@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Manager;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
+use NotifyCord\NotifyCord\Helpers\MessagePresets;
 
 class NotifyCordManager
 {
@@ -276,5 +277,115 @@ class NotifyCordManager
         }
         
         return 'https://discord.com/api/webhooks/***';
+    }
+    
+    /**
+     * Send a success message with a predefined style.
+     *
+     * @param string $title The title of the message
+     * @param string $message The main content
+     * @param array $fields Optional fields to add to the embed
+     * @param string|null $webhookUrl Optional webhook URL (uses default if not provided)
+     * @return bool Success or failure
+     */
+    public function success($title, $message, array $fields = [], $webhookUrl = null)
+    {
+        return $this->sendMessage(
+            '',
+            $webhookUrl,
+            MessagePresets::success($title, $message, $fields)
+        );
+    }
+    
+    /**
+     * Send an error message with a predefined style.
+     *
+     * @param string $title The title of the message
+     * @param string $message The main content
+     * @param array $fields Optional fields to add to the embed
+     * @param string|null $webhookUrl Optional webhook URL (uses default if not provided)
+     * @return bool Success or failure
+     */
+    public function error($title, $message, array $fields = [], $webhookUrl = null)
+    {
+        return $this->sendMessage(
+            '',
+            $webhookUrl,
+            MessagePresets::error($title, $message, $fields)
+        );
+    }
+    
+    /**
+     * Send a warning message with a predefined style.
+     *
+     * @param string $title The title of the message
+     * @param string $message The main content
+     * @param array $fields Optional fields to add to the embed
+     * @param string|null $webhookUrl Optional webhook URL (uses default if not provided)
+     * @return bool Success or failure
+     */
+    public function warning($title, $message, array $fields = [], $webhookUrl = null)
+    {
+        return $this->sendMessage(
+            '',
+            $webhookUrl,
+            MessagePresets::warning($title, $message, $fields)
+        );
+    }
+    
+    /**
+     * Send an info message with a predefined style.
+     *
+     * @param string $title The title of the message
+     * @param string $message The main content
+     * @param array $fields Optional fields to add to the embed
+     * @param string|null $webhookUrl Optional webhook URL (uses default if not provided)
+     * @return bool Success or failure
+     */
+    public function info($title, $message, array $fields = [], $webhookUrl = null)
+    {
+        return $this->sendMessage(
+            '',
+            $webhookUrl,
+            MessagePresets::info($title, $message, $fields)
+        );
+    }
+    
+    /**
+     * Send a server alert with a predefined style (for monitoring systems).
+     *
+     * @param string $title The title of the message
+     * @param string $message The main content
+     * @param array $metrics System metrics to display (e.g. CPU, RAM)
+     * @param string|null $webhookUrl Optional webhook URL (uses default if not provided)
+     * @return bool Success or failure
+     */
+    public function serverAlert($title, $message, array $metrics = [], $webhookUrl = null)
+    {
+        return $this->sendMessage(
+            '',
+            $webhookUrl,
+            MessagePresets::serverAlert($title, $message, $metrics)
+        );
+    }
+    
+    /**
+     * Send a user activity notification with a predefined style.
+     *
+     * @param string $title The title of the message
+     * @param string $message The main content
+     * @param string $username The user's name
+     * @param string|null $userAvatar Optional URL to the user's avatar
+     * @param array $activityDetails Optional details about the user's activity
+     * @param string|null $webhookUrl Optional webhook URL (uses default if not provided)
+     * @return bool Success or failure
+     */
+    public function userActivity($title, $message, $username, $userAvatar = null, array $activityDetails = [], $webhookUrl = null)
+    {
+        return $this->sendMessage(
+            '',
+            $webhookUrl,
+            MessagePresets::userActivity($title, $message, $username, $userAvatar, $activityDetails)
+        );
     }
 }
