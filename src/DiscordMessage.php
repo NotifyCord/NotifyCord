@@ -6,71 +6,69 @@ use JsonSerializable;
 
 class DiscordMessage implements JsonSerializable
 {
-    protected $channelId = null;
-    protected $content = '';
-    protected $embeds = [];
-    protected $tts = false;
-    protected $threadName = null;
-    protected $username = null;
-    protected $avatarUrl = null;
-    protected $components = [];
-    protected $retryCount = 0;
+/**
+ * The message content.
+ *
+ * @var string
+ */
+protected $content = '';
 
-    /**
-     * The message content.
-     *
-     * @var string
-     */
-    protected $content = '';
+/**
+ * The message embeds.
+ *
+ * @var array
+ */
+protected $embeds = [];
 
-    /**
-     * The message embeds.
-     *
-     * @var array
-     */
-    protected $embeds = [];
+/**
+ * Whether the message should be read as TTS.
+ *
+ * @var bool
+ */
+protected $tts = false;
 
-    /**
-     * Whether the message should be read as TTS.
-     *
-     * @var bool
-     */
-    protected $tts = false;
+/**
+ * The message thread name if creating a thread.
+ *
+ * @var string|null
+ */
+protected $threadName = null;
 
-    /**
-     * The message thread name if creating a thread.
-     *
-     * @var string|null
-     */
-    protected $threadName = null;
+/**
+ * The username to use when sending the message.
+ *
+ * @var string|null
+ */
+protected $username = null;
 
-    /**
-     * The username to use when sending the message.
-     *
-     * @var string|null
-     */
-    protected $username = null;
+/**
+ * The avatar URL to use when sending the message.
+ *
+ * @var string|null
+ */
+protected $avatarUrl = null;
 
-    /**
-     * The avatar URL to use when sending the message.
-     *
-     * @var string|null
-     */
-    protected $avatarUrl = null;
+/**
+ * The components (buttons/menus) for the message.
+ *
+ * @var array
+ */
+protected $components = [];
 
-    /**
-     * The components (buttons/menus) for the message.
-     *
-     * @var array
-     */
-    protected $components = [];
+/**
+ * The number of times this message has been retried.
+ *
+ * @var int
+ */
+protected $retryCount = 0;
 
-    /**
-     * The number of times this message has been retried.
-     *
-     * @var int
-     */
-    protected $retryCount = 0;
+/**
+ * The channel ID the message is being sent to.
+ *
+ * @var string|null
+ */
+protected $channelId = null;
+
 
     /**
      * Create a new message instance.
