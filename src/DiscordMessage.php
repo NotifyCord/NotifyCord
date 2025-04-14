@@ -106,6 +106,16 @@ protected $channelId = null;
     }
 
     /**
+     * Get the message content.
+     *
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
      * Set the message as a TTS message.
      *
      * @param bool $tts
