@@ -553,7 +553,6 @@ class NotifyCordManager
         );
     }
 
-     */
     public function deployment($environment, $version, $deployer, array $additionalFields = [], $webhookUrl = null)
     {
         $fields = [
