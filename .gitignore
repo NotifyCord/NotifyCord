@@ -1,2 +1,47 @@
-# If you're pulling this project from GitHub, DO NOT commit the attached_assets folder.
+
+# Laravel specific
+/vendor/
+/node_modules/
+/public/hot
+/public/storage
+/storage/*.key
+.env
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+# IDE specific
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Replit specific
+.upm/
+.cache/
+.config/
+.local/
+.npm/
+.nix/
+.replit
+replit.nix
+.breakpoints
+.settings
+.pythonlibs/
 /attached_assets/
+/__pycache__/
+*.pyc
+
+# Build & Package files
+/build/
+/dist/
+*.log
+*.lock
+uv.lock
