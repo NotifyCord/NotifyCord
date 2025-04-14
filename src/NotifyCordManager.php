@@ -248,7 +248,12 @@ class NotifyCordManager
             'Authorization' => "Bot {$token}",
             'Content-Type' => 'application/json',
         ];
-        $body = ['content' => $message->getContent()];
+        $messageData = $message->toArray();
+        $body = array_filter([
+            'content' => $messageData['content'],
+            'embeds' => $messageData['embeds'] ?? null,
+            'components' => $messageData['components'] ?? null,
+        ]);
 
 
         try {
