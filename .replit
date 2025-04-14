@@ -1,0 +1,96 @@
+modules = ["python-3.11", "php"]
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "shell"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "shell"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = """
+echo \"NotifyCord - Laravel Discord Notification Package
+
+Features Overview:
+- Seamless Laravel Notification System Integration
+- Discord Webhook Support
+- Bot-based Channel & User Messaging
+- Rich Embed Message Support
+- Component Support (Buttons, Action Rows)
+- Rate Limit Handling with Auto-retry
+- Queue-compatible for Async Processing
+
+Notable Implementation Details:
+- Fluent Interface for Message Building
+- Robust Error Handling
+- Rate Limit Management
+- Configurable Retry Logic
+- Comprehensive Testing Suite
+
+Sample Usage:
+
+// Using within Laravel notification
+public function toDiscord($notifiable)
+{
+    return NotifyCord::message('Your alert message')
+        ->embed(function ($embed) {
+            $embed->title('Important Notice')
+                 ->description('Details about the alert')
+                 ->color('#ff0000')
+                 ->timestamp()
+                 ->field('Status', 'Critical', true);
+        })
+        ->button('View Details', 'primary', 'view_details')
+        ->button('Visit Dashboard', 'link', null, 'https://dashboard.example.com');
+}
+
+// Webhook Configuration via .env
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/123456789/token
+DISCORD_BOT_TOKEN=your-bot-token
+\""""
+
+[[ports]]
+localPort = 5000
+externalPort = 80
