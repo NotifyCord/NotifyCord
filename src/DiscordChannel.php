@@ -1,12 +1,12 @@
 <?php
 
-namespace MehtaYukta\NotifyCord;
+namespace NotifyCord\NotifyCord;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
-use MehtaYukta\NotifyCord\Exceptions\CouldNotSendNotification;
+use NotifyCord\NotifyCord\Exceptions\CouldNotSendNotification;
 
 class DiscordChannel
 {
@@ -20,7 +20,7 @@ class DiscordChannel
     /**
      * The NotifyCord manager instance.
      *
-     * @var \MehtaYukta\NotifyCord\NotifyCordManager
+     * @var \NotifyCord\NotifyCord\NotifyCordManager
      */
     protected $manager;
 
@@ -28,7 +28,7 @@ class DiscordChannel
      * Create a new Discord channel instance.
      *
      * @param \GuzzleHttp\Client $http
-     * @param \MehtaYukta\NotifyCord\NotifyCordManager $manager
+     * @param \NotifyCord\NotifyCord\NotifyCordManager $manager
      * @return void
      */
     public function __construct(Client $http, NotifyCordManager $manager)
@@ -44,7 +44,7 @@ class DiscordChannel
      * @param \Illuminate\Notifications\Notification $notification
      * @return void
      *
-     * @throws \MehtaYukta\NotifyCord\Exceptions\CouldNotSendNotification
+     * @throws \NotifyCord\NotifyCord\Exceptions\CouldNotSendNotification
      */
     public function send($notifiable, Notification $notification)
     {
@@ -84,7 +84,8 @@ class DiscordChannel
      */
     protected function looksLikeWebhookUrl($route)
     {
-        return strpos($route, 'discord.com/api/webhooks/') !== false;
+        return strpos($route, 'discord.com/api/webhooks/') !== false || 
+               preg_match('/^https:\/\/[^\/]+\/api\/webhooks\/\d+\/\S+$/', $route);
     }
 
     /**
@@ -94,17 +95,24 @@ class DiscordChannel
      * @param DiscordMessage $message
      * @return void
      *
-     * @throws \MehtaYukta\NotifyCord\Exceptions\CouldNotSendNotification
+     * @throws \NotifyCord\NotifyCord\Exceptions\CouldNotSendNotification
      */
     protected function sendToWebhook($webhook, DiscordMessage $message)
     {
         $payload = $message->toArray();
         
+        // Check message size to prevent 400 Bad Request errors
+        $messageSize = strlen(json_encode($payload));
+        if ($messageSize > 8000000) { // 8MB limit for Discord
+            throw CouldNotSendNotification::messageTooLarge($messageSize);
+        }
+
         try {
             $response = $this->http->post($webhook, [
                 'json' => $payload,
                 'headers' => [
                     'Content-Type' => 'application/json',
+                    'User-Agent' => 'NotifyCord/1.0 (+https://github.com/NotifyCord/NotifyCord)',
                 ],
             ]);
 
@@ -143,7 +151,7 @@ class DiscordChannel
      * @param DiscordMessage $message
      * @return void
      *
-     * @throws \MehtaYukta\NotifyCord\Exceptions\CouldNotSendNotification
+     * @throws \NotifyCord\NotifyCord\Exceptions\CouldNotSendNotification
      */
     protected function sendToChannel($channelId, DiscordMessage $message)
     {
@@ -156,12 +164,19 @@ class DiscordChannel
         $endpoint = "https://discord.com/api/v10/channels/{$channelId}/messages";
         $payload = $message->toArray();
         
+        // Check message size to prevent 400 Bad Request errors
+        $messageSize = strlen(json_encode($payload));
+        if ($messageSize > 8000000) { // 8MB limit for Discord
+            throw CouldNotSendNotification::messageTooLarge($messageSize);
+        }
+        
         try {
             $response = $this->http->post($endpoint, [
                 'json' => $payload,
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'Authorization' => "Bot {$token}",
+                    'User-Agent' => 'NotifyCord/1.0 (+https://github.com/NotifyCord/NotifyCord)',
                 ],
             ]);
 

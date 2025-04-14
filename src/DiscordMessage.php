@@ -1,6 +1,6 @@
 <?php
 
-namespace MehtaYukta\NotifyCord;
+namespace NotifyCord\NotifyCord;
 
 use JsonSerializable;
 

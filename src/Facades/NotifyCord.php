@@ -1,12 +1,12 @@
 <?php
 
-namespace MehtaYukta\NotifyCord\Facades;
+namespace NotifyCord\NotifyCord\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use MehtaYukta\NotifyCord\DiscordMessage;
+use NotifyCord\NotifyCord\DiscordMessage;
 
 /**
- * @method static \MehtaYukta\NotifyCord\DiscordMessage message(string $content = '')
+ * @method static \NotifyCord\NotifyCord\DiscordMessage message(string $content = '')
  * @method static bool hasDefaultWebhook()
  * @method static string getDefaultWebhook()
  * @method static string getBotToken()
@@ -16,7 +16,7 @@ use MehtaYukta\NotifyCord\DiscordMessage;
  * @method static int getRetryDelay()
  * @method static bool shouldLogErrors()
  * 
- * @see \MehtaYukta\NotifyCord\NotifyCordManager
+ * @see \NotifyCord\NotifyCord\NotifyCordManager
  */
 class NotifyCord extends Facade
 {

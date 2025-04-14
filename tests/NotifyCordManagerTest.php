@@ -1,10 +1,10 @@
 <?php
 
-namespace MehtaYukta\NotifyCord\Tests;
+namespace NotifyCord\NotifyCord\Tests;
 
 use Illuminate\Contracts\Foundation\Application;
-use MehtaYukta\NotifyCord\DiscordMessage;
-use MehtaYukta\NotifyCord\NotifyCordManager;
+use NotifyCord\NotifyCord\DiscordMessage;
+use NotifyCord\NotifyCord\NotifyCordManager;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 

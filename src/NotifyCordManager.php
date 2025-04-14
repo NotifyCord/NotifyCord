@@ -1,6 +1,6 @@
 <?php
 
-namespace MehtaYukta\NotifyCord;
+namespace NotifyCord\NotifyCord;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Manager;
@@ -98,7 +98,7 @@ class NotifyCordManager
      * Create a new Discord message instance.
      *
      * @param string $content
-     * @return \MehtaYukta\NotifyCord\DiscordMessage
+     * @return \NotifyCord\NotifyCord\DiscordMessage
      */
     public function message($content = '')
     {
@@ -108,7 +108,7 @@ class NotifyCordManager
     /**
      * Get the Discord notification channel.
      *
-     * @return \MehtaYukta\NotifyCord\DiscordChannel
+     * @return \NotifyCord\NotifyCord\DiscordChannel
      */
     public function channel()
     {

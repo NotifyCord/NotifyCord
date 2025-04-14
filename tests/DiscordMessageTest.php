@@ -1,8 +1,8 @@
 <?php
 
-namespace MehtaYukta\NotifyCord\Tests;
+namespace NotifyCord\NotifyCord\Tests;
 
-use MehtaYukta\NotifyCord\DiscordMessage;
+use NotifyCord\NotifyCord\DiscordMessage;
 use PHPUnit\Framework\TestCase;
 
 class DiscordMessageTest extends TestCase

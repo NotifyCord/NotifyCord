@@ -1,6 +1,6 @@
 <?php
 
-namespace MehtaYukta\NotifyCord\Tests;
+namespace NotifyCord\NotifyCord\Tests;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -8,10 +8,10 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
-use MehtaYukta\NotifyCord\DiscordChannel;
-use MehtaYukta\NotifyCord\DiscordMessage;
-use MehtaYukta\NotifyCord\Exceptions\CouldNotSendNotification;
-use MehtaYukta\NotifyCord\NotifyCordManager;
+use NotifyCord\NotifyCord\DiscordChannel;
+use NotifyCord\NotifyCord\DiscordMessage;
+use NotifyCord\NotifyCord\Exceptions\CouldNotSendNotification;
+use NotifyCord\NotifyCord\NotifyCordManager;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
@@ -82,7 +82,7 @@ class DiscordChannelTest extends TestCase
         $channel = new DiscordChannel($client, $manager);
 
         $this->expectException(CouldNotSendNotification::class);
-        $this->expectExceptionMessage('Discord notification must return a `MehtaYukta\NotifyCord\DiscordMessage` instance.');
+        $this->expectExceptionMessage('Discord notification must return a `NotifyCord\NotifyCord\DiscordMessage` instance.');
 
         $channel->send($notifiable, $notification);
     }

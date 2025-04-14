@@ -1,13 +1,13 @@
 {
-    "name": "mehtayukta/notifycord",
+    "name": "notifycord/notifycord",
     "description": "A Laravel package for sending Discord notifications with rich formatting",
     "keywords": ["laravel", "discord", "notification", "webhook", "bot"],
     "type": "library",
     "license": "MIT",
     "authors": [
         {
-            "name": "Yukta Mehta",
-            "email": "example@example.com"
+            "name": "NotifyCord Team",
+            "email": "contact@example.com"
         }
     ],
     "minimum-stability": "dev",
@@ -25,12 +25,12 @@
     },
     "autoload": {
         "psr-4": {
-            "MehtaYukta\\NotifyCord\\": "src/"
+            "NotifyCord\\NotifyCord\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MehtaYukta\\NotifyCord\\Tests\\": "tests/"
+            "NotifyCord\\NotifyCord\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -39,10 +39,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "MehtaYukta\\NotifyCord\\NotifyCordServiceProvider"
+                "NotifyCord\\NotifyCord\\NotifyCordServiceProvider"
             ],
             "aliases": {
-                "NotifyCord": "MehtaYukta\\NotifyCord\\Facades\\NotifyCord"
+                "NotifyCord": "NotifyCord\\NotifyCord\\Facades\\NotifyCord"
             }
         }
     },

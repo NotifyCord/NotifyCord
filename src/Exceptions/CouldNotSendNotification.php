@@ -1,6 +1,6 @@
 <?php
 
-namespace MehtaYukta\NotifyCord\Exceptions;
+namespace NotifyCord\NotifyCord\Exceptions;
 
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
@@ -28,7 +28,7 @@ class CouldNotSendNotification extends Exception
         $className = is_object($message) ? get_class($message) : gettype($message);
 
         return new static(
-            "Discord notification must return a `MehtaYukta\NotifyCord\DiscordMessage` instance. Received: {$className}"
+            "Discord notification must return a `NotifyCord\NotifyCord\DiscordMessage` instance. Received: {$className}"
         );
     }
 
