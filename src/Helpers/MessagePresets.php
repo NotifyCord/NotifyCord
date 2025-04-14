@@ -162,7 +162,6 @@ class MessagePresets
             });
         };
     }
-}
 
     /**
      * Create a payment notification preset.
@@ -240,3 +239,4 @@ class MessagePresets
             });
         };
     }
+}
