@@ -97,8 +97,13 @@ return [
 Add the following to your `.env` file:
 
 ```
+DISCORD_BOT_TOKEN=your-bot-token  # Your Discord bot token from Discord Developer Portal
+```
+
+If you still want to use webhooks as a fallback or alternative, you can also add:
+
+```
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/webhook-id/webhook-token
-DISCORD_BOT_TOKEN=bot-token  # Optional, only if you need to send to specific channels
 ```
 
 ## 📖 Usage Guide
@@ -173,11 +178,11 @@ class User extends Authenticatable
     
     public function routeNotificationForDiscord()
     {
-        // Return a webhook URL or channel ID
-        return 'https://discord.com/api/webhooks/your-webhook-id/your-webhook-token';
+        // Return a Discord channel ID when using bot token
+        return '123456789012345678';
         
-        // Or return a channel ID if using bot token
-        // return '123456789012345678';
+        // Or return a webhook URL if you prefer that method
+        // return 'https://discord.com/api/webhooks/your-webhook-id/your-webhook-token';
     }
 }
 ```
