@@ -6,24 +6,25 @@ return [
     | Default Discord Webhook URL
     |--------------------------------------------------------------------------
     |
-    | This is the default webhook URL that will be used when no specific
-    | webhook URL is provided for a notification.
+    | Your Discord server's main webhook URL
     |
     */
     'default_webhook' => env('DISCORD_WEBHOOK_URL'),
 
     /*
     |--------------------------------------------------------------------------
-    | Discord Bot Token (Not used in webhook-only mode)
+    | Discord Channels
     |--------------------------------------------------------------------------
     |
-    | This token is required if you want to send messages to specific Discord
-    | channels directly (instead of using webhooks). You'll need to create a
-    | bot on Discord's developer portal to get this token.
-    | Note: This package currently focuses on webhook-based notifications only.
+    | Channel IDs for different notification types
     |
     */
-    // 'bot_token' => env('DISCORD_BOT_TOKEN'),
+    'channels' => [
+        'exceptions' => env('DISCORD_EXCEPTION_CHANNEL_ID'),
+        'deployments' => env('DISCORD_DEPLOYMENT_CHANNEL_ID'),
+        'logs' => env('DISCORD_LOG_CHANNEL_ID'),
+        'alerts' => env('DISCORD_ALERT_CHANNEL_ID'),
+    ],
 
     /*
     |--------------------------------------------------------------------------

@@ -396,8 +396,9 @@ class NotifyCordManager
      * @param string|null $webhookUrl
      * @return bool
      */
-    public function exception(\Throwable $exception, $webhookUrl = null)
+    public function exception(\Throwable $exception)
     {
+        $channelId = $this->config('channels.exceptions');
         $fields = [
             'Message' => $exception->getMessage(),
             'File' => $exception->getFile(),
