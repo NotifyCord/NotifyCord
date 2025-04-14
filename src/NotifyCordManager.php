@@ -447,6 +447,60 @@ class NotifyCordManager
      * @param array $additionalFields
      * @param string|null $webhookUrl
      * @return bool
+
+    /**
+     * Send a payment notification.
+     *
+     * @param string $status
+     * @param array $paymentDetails
+     * @param string|null $webhookUrl
+     * @return bool
+     */
+    public function payment($status, array $paymentDetails, $webhookUrl = null)
+    {
+        return $this->sendMessage(
+            '',
+            $webhookUrl,
+            MessagePresets::payment($status, $paymentDetails)
+        );
+    }
+
+    /**
+     * Send an API status update.
+     *
+     * @param string $status
+     * @param string $message
+     * @param array $metrics
+     * @param string|null $webhookUrl
+     * @return bool
+     */
+    public function apiStatus($status, $message, array $metrics = [], $webhookUrl = null)
+    {
+        return $this->sendMessage(
+            '',
+            $webhookUrl,
+            MessagePresets::apiStatus($status, $message, $metrics)
+        );
+    }
+
+    /**
+     * Send a security alert.
+     *
+     * @param string $level
+     * @param string $message
+     * @param array $details
+     * @param string|null $webhookUrl
+     * @return bool
+     */
+    public function securityAlert($level, $message, array $details = [], $webhookUrl = null)
+    {
+        return $this->sendMessage(
+            '',
+            $webhookUrl,
+            MessagePresets::securityAlert($level, $message, $details)
+        );
+    }
+
      */
     public function deployment($environment, $version, $deployer, array $additionalFields = [], $webhookUrl = null)
     {

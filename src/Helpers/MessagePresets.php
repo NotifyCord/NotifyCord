@@ -163,3 +163,80 @@ class MessagePresets
         };
     }
 }
+
+    /**
+     * Create a payment notification preset.
+     *
+     * @param string $status
+     * @param array $paymentDetails
+     * @return \Closure
+     */
+    public static function payment($status, array $paymentDetails)
+    {
+        return function (DiscordMessage $discordMessage) use ($status, $paymentDetails) {
+            return $discordMessage->embed(function ($embed) use ($status, $paymentDetails) {
+                $embed->title('💳 Payment ' . ucfirst($status))
+                     ->color($status === 'success' ? '#2ecc71' : '#e74c3c')
+                     ->timestamp();
+                
+                foreach ($paymentDetails as $name => $value) {
+                    $embed->field($name, $value, true);
+                }
+            });
+        };
+    }
+
+    /**
+     * Create an API status update preset.
+     *
+     * @param string $status
+     * @param string $message
+     * @param array $metrics
+     * @return \Closure
+     */
+    public static function apiStatus($status, $message, array $metrics = [])
+    {
+        return function (DiscordMessage $discordMessage) use ($status, $message, $metrics) {
+            return $discordMessage->embed(function ($embed) use ($status, $message, $metrics) {
+                $embed->title('🔌 API Status Update')
+                     ->description($message)
+                     ->color($status === 'up' ? '#2ecc71' : '#e74c3c')
+                     ->timestamp();
+                
+                foreach ($metrics as $name => $value) {
+                    $embed->field($name, $value, true);
+                }
+            });
+        };
+    }
+
+    /**
+     * Create a security alert preset.
+     *
+     * @param string $level
+     * @param string $message
+     * @param array $details
+     * @return \Closure
+     */
+    public static function securityAlert($level, $message, array $details = [])
+    {
+        $colors = [
+            'critical' => '#e74c3c',
+            'high' => '#e67e22',
+            'medium' => '#f1c40f',
+            'low' => '#3498db'
+        ];
+
+        return function (DiscordMessage $discordMessage) use ($level, $message, $details, $colors) {
+            return $discordMessage->embed(function ($embed) use ($level, $message, $details, $colors) {
+                $embed->title('🛡️ Security Alert: ' . ucfirst($level))
+                     ->description($message)
+                     ->color($colors[$level] ?? '#95a5a6')
+                     ->timestamp();
+                
+                foreach ($details as $name => $value) {
+                    $embed->field($name, $value, false);
+                }
+            });
+        };
+    }
