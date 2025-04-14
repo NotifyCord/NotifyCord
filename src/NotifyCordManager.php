@@ -267,17 +267,67 @@ class NotifyCordManager
      * @param callable|null $callback Optional callback for customizing the message
      * @return bool Success or failure
      */
+    protected function getOperationMode()
+    {
+        return $this->config('mode', 'webhook');
+    }
+
+    protected function handleError(\Exception $e)
+    {
+        if ($this->config('display_errors', true)) {
+            $detailLevel = $this->config('error_detail_level', 'detailed');
+            
+            $errorMessage = match($detailLevel) {
+                'basic' => $e->getMessage(),
+                'detailed' => sprintf(
+                    "Error: %s\nFile: %s\nLine: %d",
+                    $e->getMessage(),
+                    $e->getFile(),
+                    $e->getLine()
+                ),
+                'debug' => sprintf(
+                    "Error: %s\nFile: %s\nLine: %d\nTrace:\n%s",
+                    $e->getMessage(),
+                    $e->getFile(),
+                    $e->getLine(),
+                    $e->getTraceAsString()
+                ),
+                default => $e->getMessage()
+            };
+
+            throw new \Exception($errorMessage);
+        }
+
+        if ($this->shouldLogErrors()) {
+            Log::error('Discord notification failed', [
+                'exception' => $e,
+                'mode' => $this->getOperationMode(),
+                'channel_id' => $this->channelId
+            ]);
+        }
+
+        return false;
+    }
+
     public function sendMessage($message, $webhookUrl = null, $callback = null)
     {
         try {
-            if ($this->channelId && $this->botToken) { // Use bot token if channel ID is set
+            $mode = $this->getOperationMode();
+            
+            if ($mode === 'bot' && $this->botToken) {
+                if (!$this->channelId) {
+                    throw new \Exception('Channel ID is required when using bot mode');
+                }
                 $discordMessage = new DiscordMessage($message);
                 if ($callback) {
                     $callback($discordMessage);
                 }
                 return $this->sendToChannel($this->channelId, $discordMessage);
-            } else {
+            } else if ($mode === 'webhook') {
                 $webhookUrl = $webhookUrl ?: $this->getDefaultWebhook();
+                if (!$webhookUrl) {
+                    throw new \Exception('Webhook URL is required when using webhook mode');
+                }
                 if ($this->shouldLogErrors()) {
                     Log::debug('NotifyCord attempting to send message', [
                         'webhook' => $this->maskWebhookUrl($webhookUrl),

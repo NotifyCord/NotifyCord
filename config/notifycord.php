@@ -3,13 +3,35 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Default Discord Webhook URL
+    | Discord Mode Configuration
     |--------------------------------------------------------------------------
     |
-    | Your Discord server's main webhook URL
+    | Choose between 'webhook' or 'bot' mode
+    |
+    */
+    'mode' => env('DISCORD_MODE', 'webhook'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Discord Credentials
+    |--------------------------------------------------------------------------
+    |
+    | Credentials based on selected mode
     |
     */
     'default_webhook' => env('DISCORD_WEBHOOK_URL'),
+    'bot_token' => env('DISCORD_BOT_TOKEN'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Error Handling Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure how errors are handled and displayed
+    |
+    */
+    'display_errors' => env('DISCORD_DISPLAY_ERRORS', true),
+    'error_detail_level' => env('DISCORD_ERROR_DETAIL_LEVEL', 'detailed'), // basic, detailed, debug
     
     /*
     |--------------------------------------------------------------------------
