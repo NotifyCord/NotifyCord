@@ -10,6 +10,31 @@ return [
     |
     */
     'default_webhook' => env('DISCORD_WEBHOOK_URL'),
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Default Channel ID
+    |--------------------------------------------------------------------------
+    |
+    | Default channel ID for all notifications if specific channels are not set
+    |
+    */
+    'default_channel_id' => env('NOTIFYCORD_CHANNEL_ID'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Channel IDs
+    |--------------------------------------------------------------------------
+    |
+    | Specific channel IDs for different types of notifications
+    |
+    */
+    'channels' => [
+        'exceptions' => env('DISCORD_EXCEPTION_CHANNEL_ID'),
+        'deployments' => env('DISCORD_DEPLOYMENT_CHANNEL_ID'),
+        'logs' => env('DISCORD_LOG_CHANNEL_ID'),
+        'alerts' => env('DISCORD_ALERT_CHANNEL_ID'),
+    ],
 
     /*
     |--------------------------------------------------------------------------

@@ -398,7 +398,9 @@ class NotifyCordManager
      */
     public function exception(\Throwable $exception)
     {
-        $channelId = $this->config('channels.exceptions');
+        $channelId = $this->config('channels.exceptions') 
+            ?? $this->config('default_channel_id');
+            
         $fields = [
             'Message' => $exception->getMessage(),
             'File' => $exception->getFile(),
