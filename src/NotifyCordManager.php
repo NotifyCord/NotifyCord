@@ -79,7 +79,7 @@ class NotifyCordManager
      * @param \Illuminate\Contracts\Foundation\Application $app
      * @return void
      */
-    public function __construct($app)
+    public function __construct(\Illuminate\Contracts\Foundation\Application $app)
     {
         $this->app = $app;
         $this->http = new Client([
