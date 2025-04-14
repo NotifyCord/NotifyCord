@@ -87,6 +87,7 @@ return [
     'timeout' => 5, // seconds
     'connect_timeout' => 5, // seconds
     'log_errors' => true,
+    'log_file' => storage_path('logs/notifycord.log'),  // Custom log file for NotifyCord
     // ...
 ];
 ```
@@ -316,6 +317,31 @@ public function sendServerAlert($system, $metrics)
                  ->footer("Server Monitor", "https://example.com/logo.png");
         });
 }
+```
+
+## 🐛 Debugging and Troubleshooting
+
+If your messages are not being sent but no errors appear, you can check the NotifyCord log file:
+
+```php
+$logPath = storage_path('logs/notifycord.log');
+if (file_exists($logPath)) {
+    $logs = file_get_contents($logPath);
+    // Display or process logs
+}
+```
+
+Common issues and solutions:
+
+1. **Invalid webhook URL**: Ensure your webhook URL is correct and the webhook exists in your Discord server.
+2. **Rate limiting**: Discord may rate limit your requests. The package will retry automatically, but check logs for details.
+3. **Network issues**: If your server cannot reach Discord's API, check your server's network configuration.
+4. **Large messages**: Discord has message size limits. Try sending smaller messages or fewer embeds.
+
+You can also enable verbose logging by adding this to your `.env` file:
+
+```
+NOTIFYCORD_DEBUG=true
 ```
 
 ## 🛡️ Security
