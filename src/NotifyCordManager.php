@@ -4,6 +4,7 @@ namespace NotifyCord\NotifyCord;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Manager;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 class NotifyCordManager
