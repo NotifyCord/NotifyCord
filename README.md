@@ -5,7 +5,7 @@
 <h1 align="center">NotifyCord</h1>
 
 <p align="center">
-  Laravel için güçlü ve esnek Discord bildirim paketi
+  A powerful and flexible Discord notification package for Laravel
 </p>
 
 <p align="center">
@@ -16,44 +16,44 @@
 </p>
 
 <p align="center">
-NotifyCord, Laravel uygulamanızdan Discord bildirimlerini göndermek için güçlü ve esnek bir pakettir. Zengin Discord mesajlarını kanallar ve webhook'lar aracılığıyla göndermenin temiz ve basit bir yolunu sunar ve Laravel'in bildirim sistemiyle mükemmel bir şekilde entegre olur.
+NotifyCord is a powerful and flexible package for sending Discord notifications from your Laravel application. It provides a clean and simple way to send rich Discord messages through channels and webhooks, and integrates perfectly with Laravel's notification system.
 </p>
 
 ---
 
-## ✨ Özellikler
+## ✨ Features
 
-- 🔌 Laravel'in Bildirim sistemiyle sorunsuz entegrasyon
-- 🤖 Bot tabanlı mesajlaşma desteği (kanallara ve kullanıcılara)
-- 🔗 Webhook tabanlı bildirimler için destek
-- 📋 Zengin gömülü mesaj desteği (başlık, açıklama, alanlar, renkler vb.)
-- 🔘 Discord bileşenleri desteği (butonlar, aksiyon satırları)
-- 🔁 Otomatik hız sınırı yönetimi ve yeniden denemeler
-- 🧩 Asenkron bildirimler için kuyruk uyumlu
-- 🛡️ Detaylı istisnalarla hata yönetimi
-- ⚙️ Kapsamlı yapılandırma seçenekleri
+- 🔌 Seamless integration with Laravel's Notification system
+- 🤖 Support for bot-based messaging (to channels and users)
+- 🔗 Support for webhook-based notifications
+- 📋 Rich embed message support (title, description, fields, colors, etc.)
+- 🔘 Discord components support (buttons, action rows)
+- 🔁 Automatic rate limit handling and retries
+- 🧩 Queue-compatible for asynchronous notifications
+- 🛡️ Error handling with detailed exceptions
+- ⚙️ Comprehensive configuration options
 
-## 📋 Gereksinimler
+## 📋 Requirements
 
-- PHP 8.0 veya üzeri
-- Laravel 9.0 veya üzeri
-- GuzzleHTTP 7.0 veya üzeri
+- PHP 8.0 or higher
+- Laravel 9.0 or higher
+- GuzzleHTTP 7.0 or higher
 
-## 💻 Kurulum
+## 💻 Installation
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/NotifyCord/NotifyCord/main/examples/installation.png" alt="Kurulum" width="500">
+  <img src="https://raw.githubusercontent.com/NotifyCord/NotifyCord/main/examples/installation.png" alt="Installation" width="500">
 </p>
 
-Paketi Composer ile yükleyebilirsiniz:
+You can install the package via composer:
 
 ```bash
 composer require notifycord/notifycord
 ```
 
-Laravel'in paket otomatik keşfini kullanıyorsanız, paket servis sağlayıcısını otomatik olarak kaydedecektir.
+The package will automatically register its service provider if you're using Laravel's package auto-discovery.
 
-Otomatik keşif olmadan Laravel kullanıyorsanız, servis sağlayıcısını `config/app.php` dosyanıza ekleyin:
+If you're using Laravel without auto-discovery, add the service provider to your `config/app.php`:
 
 ```php
 'providers' => [
@@ -67,15 +67,15 @@ Otomatik keşif olmadan Laravel kullanıyorsanız, servis sağlayıcısını `co
 ],
 ```
 
-### Yapılandırma Dosyasını Yayınlama
+### Publishing the Configuration
 
-Yapılandırma dosyasını şu komut ile yayınlayabilirsiniz:
+You can publish the configuration file with:
 
 ```bash
 php artisan vendor:publish --tag="notifycord-config"
 ```
 
-Bu, uygulamanızda aşağıdaki seçeneklerle bir `config/notifycord.php` yapılandırma dosyası oluşturacaktır:
+This will create a `config/notifycord.php` configuration file in your application with the following options:
 
 ```php
 return [
@@ -84,38 +84,38 @@ return [
     'retry_on_rate_limit' => true,
     'retry_on_failure' => true,
     'max_retries' => 3,
-    'retry_delay' => 2, // saniye
-    'timeout' => 5, // saniye
-    'connect_timeout' => 5, // saniye
+    'retry_delay' => 2, // seconds
+    'timeout' => 5, // seconds
+    'connect_timeout' => 5, // seconds
     'log_errors' => true,
     // ...
 ];
 ```
 
-### Ortam Yapılandırması
+### Environment Configuration
 
-`.env` dosyanıza aşağıdakileri ekleyin:
+Add the following to your `.env` file:
 
 ```
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/webhook-id/webhook-token
-DISCORD_BOT_TOKEN=bot-token  # İsteğe bağlı, sadece belirli kanallara göndermek istiyorsanız
+DISCORD_BOT_TOKEN=bot-token  # Optional, only if you need to send to specific channels
 ```
 
-## 📖 Kullanım Kılavuzu
+## 📖 Usage Guide
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/NotifyCord/NotifyCord/main/examples/notifycord-banner.png" alt="NotifyCord Banner" width="800">
 </p>
 
-### 🚀 Laravel Bildirim Sistemi Entegrasyonu
+### 🚀 Laravel Notification System Integration
 
-NotifyCord'u kullanmanın en kolay yolu, Laravel'in bildirim sistemi üzerinden kullanmaktır. İlk olarak, bir bildirim sınıfı oluşturun:
+The easiest way to use NotifyCord is through Laravel's notification system. First, create a notification:
 
 ```bash
 php artisan make:notification DiscordNotification
 ```
 
-Sonra, oluşturulan bildirim sınıfına `toDiscord` metodunu ekleyin:
+Then, modify the generated notification class to include a `toDiscord` method:
 
 ```php
 <?php
@@ -143,21 +143,21 @@ class DiscordNotification extends Notification
     {
         return NotifyCord::message($this->message)
             ->embed(function ($embed) {
-                $embed->title('Önemli Bildirim')
-                     ->description('Bu uygulamamızdan gelen önemli bir bildirimdir')
+                $embed->title('Important Notification')
+                     ->description('This is an important notification from your application')
                      ->color('#ff0000')
                      ->timestamp()
-                     ->footer('Uygulamanız', 'https://example.com/logo.png')
-                     ->field('Durum', 'Aktif', true)
-                     ->field('Ortam', app()->environment(), true);
+                     ->footer('Your Application', 'https://example.com/logo.png')
+                     ->field('Status', 'Active', true)
+                     ->field('Environment', app()->environment(), true);
             })
-            ->button('Detayları Görüntüle', 'primary', 'view_details')
-            ->button('Paneli Ziyaret Et', 'link', null, 'https://dashboard.example.com');
+            ->button('View Details', 'primary', 'view_details')
+            ->button('Visit Dashboard', 'link', null, 'https://dashboard.example.com');
     }
 }
 ```
 
-Modelinizi Discord üzerinden "bildirim yapılabilir" hale getirmek için, `routeNotificationForDiscord` metodunu ekleyin:
+To make your model "notifiable" via Discord, add the `routeNotificationForDiscord` method to it:
 
 ```php
 <?php
@@ -173,41 +173,41 @@ class User extends Authenticatable
     
     public function routeNotificationForDiscord()
     {
-        // Webhook URL veya kanal ID'si döndürün
+        // Return a webhook URL or channel ID
         return 'https://discord.com/api/webhooks/your-webhook-id/your-webhook-token';
         
-        // Veya bot token kullanıyorsanız kanal ID'si döndürün
+        // Or return a channel ID if using bot token
         // return '123456789012345678';
     }
 }
 ```
 
-Ardından bildirimi gönderin:
+Then send the notification:
 
 ```php
-$user->notify(new DiscordNotification('NotifyCord\'dan merhaba!'));
+$user->notify(new DiscordNotification('Hello from NotifyCord!'));
 ```
 
-### 🔄 Doğrudan Kullanım
+### 🔄 Direct Usage
 
-NotifyCord'u bildirim sınıfı olmadan doğrudan da kullanabilirsiniz:
+You can also use NotifyCord directly without a notification class:
 
 ```php
 use NotifyCord\NotifyCord\Facades\NotifyCord;
 
-// .env dosyasında yapılandırılmış varsayılan webhook'a gönder
+// Send to the default webhook configured in .env
 NotifyCord::channel()->send(null, new class {
     public function toDiscord() {
-        return NotifyCord::message('NotifyCord ile doğrudan mesaj!')
+        return NotifyCord::message('Direct message using NotifyCord!')
             ->embed(function ($embed) {
-                $embed->title('Doğrudan Kullanım Örneği')
-                     ->description('Bu mesaj, bildirim sınıfı olmadan doğrudan gönderilmiştir')
+                $embed->title('Direct Usage Example')
+                     ->description('This message was sent directly without a notification class')
                      ->color('#00ff00');
             });
     }
 });
 
-// Veya özel bir webhook URL'si belirtin
+// Or specify a custom webhook URL
 $webhookUrl = 'https://discord.com/api/webhooks/custom/webhook';
 $notifiable = new class {
     public function routeNotificationForDiscord() {
@@ -217,120 +217,120 @@ $notifiable = new class {
 
 NotifyCord::channel()->send($notifiable, new class {
     public function toDiscord() {
-        return NotifyCord::message('Özel webhook mesajı');
+        return NotifyCord::message('Custom webhook message');
     }
 });
 ```
 
-## 📊 Mesaj Bileşenleri
+## 📊 Message Components
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/NotifyCord/NotifyCord/main/examples/discord-components.png" alt="Discord Components" width="700">
 </p>
 
-### 🎨 Zengin Mesaj Blokları (Embeds)
+### 🎨 Rich Embeds
 
-Discord embed'leri zengin formatlama seçenekleri sunar:
+Discord embeds provide rich formatting options:
 
 ```php
-NotifyCord::message('Embed içeren mesaj')
+NotifyCord::message('Message with embed')
     ->embed(function ($embed) {
-        $embed->title('Embed Başlığı')
-             ->description('Bu bir embed açıklamasıdır')
+        $embed->title('Embed Title')
+             ->description('This is the embed description')
              ->url('https://example.com')
              ->color('#3498db')
-             ->timestamp() // Güncel zaman
-             ->footer('Altbilgi metni', 'https://example.com/footer-icon.png')
+             ->timestamp() // Current time
+             ->footer('Footer text', 'https://example.com/footer-icon.png')
              ->thumbnail('https://example.com/thumbnail.png')
              ->image('https://example.com/image.png')
-             ->author('Yazar Adı', 'https://example.com', 'https://example.com/author-icon.png')
-             ->field('Alan 1', 'Değer 1', true)
-             ->field('Alan 2', 'Değer 2', true)
-             ->field('Alan 3', 'Değer 3', false);
+             ->author('Author Name', 'https://example.com', 'https://example.com/author-icon.png')
+             ->field('Field 1', 'Value 1', true)
+             ->field('Field 2', 'Value 2', true)
+             ->field('Field 3', 'Value 3', false);
     });
 ```
 
-### 🔘 İnteraktif Butonlar
+### 🔘 Interactive Buttons
 
-Mesajlarınıza etkileşimli butonlar ekleyin:
+Add interactive buttons to your messages:
 
 ```php
-NotifyCord::message('Butonlu mesaj')
-    ->button('Birincil Buton', 'primary', 'primary_button_id')
-    ->button('İkincil Buton', 'secondary', 'secondary_button_id')
-    ->button('Başarı Butonu', 'success', 'success_button_id')
-    ->button('Tehlike Butonu', 'danger', 'danger_button_id')
-    ->button('Web Sitesini Ziyaret Et', 'link', null, 'https://example.com');
+NotifyCord::message('Message with buttons')
+    ->button('Primary Button', 'primary', 'primary_button_id')
+    ->button('Secondary Button', 'secondary', 'secondary_button_id')
+    ->button('Success Button', 'success', 'success_button_id')
+    ->button('Danger Button', 'danger', 'danger_button_id')
+    ->button('Visit Website', 'link', null, 'https://example.com');
 ```
 
-Butonları birden fazla aksiyon satırına da düzenleyebilirsiniz:
+You can also organize buttons into multiple action rows:
 
 ```php
-NotifyCord::message('Çoklu aksiyon satırlı mesaj')
-    ->button('Buton 1', 'primary', 'button_1')
-    ->button('Buton 2', 'secondary', 'button_2')
+NotifyCord::message('Message with multiple action rows')
+    ->button('Button 1', 'primary', 'button_1')
+    ->button('Button 2', 'secondary', 'button_2')
     ->addActionRow()
-    ->button('Buton 3', 'success', 'button_3')
-    ->button('Buton 4', 'danger', 'button_4');
+    ->button('Button 3', 'success', 'button_3')
+    ->button('Button 4', 'danger', 'button_4');
 ```
 
-## 📋 Örnekler
+## 📋 Examples
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/NotifyCord/NotifyCord/main/examples/example-preview.png" alt="Example Preview" width="650">
 </p>
 
-### 📱 Mobil Uygulama Bildirimleri
+### 📱 Mobile App Notifications
 
 ```php
-// Mobil uygulama işlem bildirimi
+// Mobile app transaction notification
 public function sendPurchaseNotification($user, $transaction)
 {
-    $user->notify(new DiscordNotification("Yeni Satın Alma İşlemi: #{$transaction->id}"))
+    $user->notify(new DiscordNotification("New Purchase: #{$transaction->id}"))
         ->embed(function ($embed) use ($transaction) {
-            $embed->title("Satın Alma: {$transaction->product_name}")
-                 ->description("Satın alma işleminiz başarıyla tamamlandı.")
+            $embed->title("Purchase: {$transaction->product_name}")
+                 ->description("Your purchase has been successfully completed.")
                  ->timestamp()
                  ->color('#2ecc71')
-                 ->field('Müşteri', $transaction->user->name, true)
-                 ->field('Fiyat', "{$transaction->amount} {$transaction->currency}", true)
-                 ->field('Durum', 'Onaylandı', true);
+                 ->field('Customer', $transaction->user->name, true)
+                 ->field('Price', "{$transaction->amount} {$transaction->currency}", true)
+                 ->field('Status', 'Confirmed', true);
         })
-        ->button('Sipariş Detayları', 'primary', 'view_order')
-        ->button('Fatura', 'secondary', 'view_invoice')
-        ->button('Destek', 'link', null, 'https://example.com/support');
+        ->button('Order Details', 'primary', 'view_order')
+        ->button('Invoice', 'secondary', 'view_invoice')
+        ->button('Support', 'link', null, 'https://example.com/support');
 }
 ```
 
-### 🚨 Sistem Uyarıları
+### 🚨 System Alerts
 
 ```php
-// Sistem uyarı bildirimi
+// System alert notification
 public function sendServerAlert($system, $metrics)
 {
-    return NotifyCord::message("Sistem Uyarısı: {$system->name}")
+    return NotifyCord::message("System Alert: {$system->name}")
         ->embed(function ($embed) use ($system, $metrics) {
-            $embed->title("🚨 Yüksek CPU Kullanımı")
-                 ->description("Sunucu CPU kullanımı belirlenen eşiği aştı.")
+            $embed->title("🚨 High CPU Usage")
+                 ->description("Server CPU usage has exceeded the configured threshold.")
                  ->color('#e74c3c')
                  ->timestamp()
-                 ->field('Sunucu', $system->name, true)
+                 ->field('Server', $system->name, true)
                  ->field('CPU', "{$metrics->cpu_usage}%", true)
-                 ->field('Bellek', "{$metrics->memory_usage}%", true)
+                 ->field('Memory', "{$metrics->memory_usage}%", true)
                  ->field('Disk', "{$metrics->disk_usage}%", true)
-                 ->footer("Sunucu Monitörü", "https://example.com/logo.png");
+                 ->footer("Server Monitor", "https://example.com/logo.png");
         });
 }
 ```
 
-## 🛡️ Güvenlik
+## 🛡️ Security
 
-Güvenlik açıklarını keşfederseniz, lütfen issue tracker'ı kullanmak yerine contact@example.com adresine e-posta gönderin.
+If you discover any security vulnerabilities, please email contact@example.com instead of using the issue tracker.
 
-## 📄 Lisans
+## 📄 License
 
-MIT Lisansı (MIT). Daha fazla bilgi için lütfen [Lisans Dosyasına](LICENSE.md) bakın.
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
-## 🤝 Katkıda Bulunma
+## 🤝 Contributing
 
-Katkılarınızı memnuniyetle karşılıyoruz! Lütfen [Katkıda Bulunma Rehberimize](CONTRIBUTING.md) göz atın.
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
