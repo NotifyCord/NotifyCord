@@ -207,4 +207,74 @@ class NotifyCordManager
     {
         return $this->logErrors;
     }
+    
+    /**
+     * Send a simple message to a Discord webhook URL.
+     *
+     * @param string $message The message text
+     * @param string|null $webhookUrl Optional webhook URL (uses default if not provided)
+     * @param callable|null $callback Optional callback for customizing the message
+     * @return bool Success or failure
+     */
+    public function sendMessage($message, $webhookUrl = null, $callback = null)
+    {
+        try {
+            $webhookUrl = $webhookUrl ?: $this->getDefaultWebhook();
+            
+            $notifiable = new WebhookNotifiable($webhookUrl);
+            $notification = new SimpleDiscordNotification($message, $callback);
+            
+            $notifiable->notify($notification);
+            
+            return true;
+            
+        } catch (\Exception $e) {
+            if ($this->shouldLogErrors()) {
+                $logChannel = $this->config('log_channel', 'stack');
+                $logFile = $this->config('log_file');
+                
+                if ($logFile) {
+                    Log::channel($logChannel)->error('Discord notification failed: ' . $e->getMessage(), [
+                        'exception' => $e,
+                        'webhook' => $this->maskWebhookUrl($webhookUrl),
+                    ]);
+                    
+                    // Özel log dosyasına da yazma
+                    file_put_contents(
+                        $logFile, 
+                        '[' . date('Y-m-d H:i:s') . '] Discord notification failed: ' . $e->getMessage() . 
+                        ' Webhook: ' . $this->maskWebhookUrl($webhookUrl) . "\n", 
+                        FILE_APPEND
+                    );
+                } else {
+                    Log::channel($logChannel)->error('Discord notification failed: ' . $e->getMessage(), [
+                        'exception' => $e,
+                        'webhook' => $this->maskWebhookUrl($webhookUrl),
+                    ]);
+                }
+            }
+            
+            return false;
+        }
+    }
+    
+    /**
+     * Mask the webhook URL for security when logging.
+     *
+     * @param string $webhookUrl
+     * @return string
+     */
+    protected function maskWebhookUrl($webhookUrl)
+    {
+        if (!$webhookUrl) return 'null';
+        
+        $parts = explode('/', $webhookUrl);
+        $lastPart = end($parts);
+        
+        if (strlen($lastPart) > 8) {
+            return str_replace($lastPart, substr($lastPart, 0, 4) . '...' . substr($lastPart, -4), $webhookUrl);
+        }
+        
+        return 'https://discord.com/api/webhooks/***';
+    }
 }

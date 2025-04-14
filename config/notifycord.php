@@ -14,15 +14,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Discord Bot Token
+    | Discord Bot Token (Not used in webhook-only mode)
     |--------------------------------------------------------------------------
     |
     | This token is required if you want to send messages to specific Discord
     | channels directly (instead of using webhooks). You'll need to create a
     | bot on Discord's developer portal to get this token.
+    | Note: This package currently focuses on webhook-based notifications only.
     |
     */
-    'bot_token' => env('DISCORD_BOT_TOKEN'),
+    // 'bot_token' => env('DISCORD_BOT_TOKEN'),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,10 +55,15 @@ return [
     | Logging
     |--------------------------------------------------------------------------
     |
-    | Enable or disable logging of Discord notification errors.
+    | Configure how errors are logged. You can specify a custom log file path
+    | and the Laravel log channel to use. When messages aren't sent but no
+    | errors appear, check the notifycord.log file for troubleshooting.
     |
     */
     'log_errors' => true,
+    'log_file' => storage_path('logs/notifycord.log'),
+    'log_channel' => 'stack',
+    'debug' => env('NOTIFYCORD_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
