@@ -225,9 +225,42 @@ class NotifyCordManager
     {
         return $this->logErrors;
     }
-    
+
+
     /**
-     * Send a simple message to a Discord webhook URL.
+     * Send a message using the bot token and channel ID.
+     *
+     * @param string $channelId The ID of the Discord channel.
+     * @param DiscordMessage $message The message to send.
+     * @return bool True on success, false on failure.
+     * @throws \Exception If the bot token is missing or there's an error sending the message.
+     */
+    protected function sendToChannel($channelId, DiscordMessage $message)
+    {
+        $token = $this->botToken;
+
+        if (empty($token)) {
+            throw new \Exception("Missing bot token."); //More descriptive exception
+        }
+
+        $endpoint = "https://discord.com/api/v10/channels/{$channelId}/messages";
+        $headers = [
+            'Authorization' => "Bot {$token}",
+            'Content-Type' => 'application/json',
+        ];
+        $body = ['content' => $message->getContent()];
+
+
+        try {
+            $response = $this->http->post($endpoint, ['headers' => $headers, 'json' => $body]);
+            return $response->getStatusCode() === 200;
+        } catch (\Exception $e) {
+            throw new \Exception("Error sending message to channel: " . $e->getMessage()); //Wrap exception for better error handling
+        }
+    }
+
+    /**
+     * Send a simple message to a Discord webhook URL or channel.
      *
      * @param string $message The message text
      * @param string|null $webhookUrl Optional webhook URL (uses default if not provided)
@@ -237,57 +270,65 @@ class NotifyCordManager
     public function sendMessage($message, $webhookUrl = null, $callback = null)
     {
         try {
-            $webhookUrl = $webhookUrl ?: $this->getDefaultWebhook();
-            
-            if ($this->shouldLogErrors()) {
-                Log::debug('NotifyCord attempting to send message', [
-                    'webhook' => $this->maskWebhookUrl($webhookUrl),
-                    'has_callback' => !is_null($callback),
-                    'message_length' => strlen($message)
-                ]);
+            if ($this->channelId && $this->botToken) { // Use bot token if channel ID is set
+                $discordMessage = new DiscordMessage($message);
+                if ($callback) {
+                    $callback($discordMessage);
+                }
+                return $this->sendToChannel($this->channelId, $discordMessage);
+            } else {
+                $webhookUrl = $webhookUrl ?: $this->getDefaultWebhook();
+                if ($this->shouldLogErrors()) {
+                    Log::debug('NotifyCord attempting to send message', [
+                        'webhook' => $this->maskWebhookUrl($webhookUrl),
+                        'has_callback' => !is_null($callback),
+                        'message_length' => strlen($message)
+                    ]);
+                }
+
+                $notifiable = new WebhookNotifiable($webhookUrl);
+                $notification = new SimpleDiscordNotification($message, $callback);
+
+                $notifiable->notify($notification);
+
+                if ($this->shouldLogErrors()) {
+                    Log::debug('NotifyCord message sent successfully');
+                }
+
+                return true;
             }
-            
-            $notifiable = new WebhookNotifiable($webhookUrl);
-            $notification = new SimpleDiscordNotification($message, $callback);
-            
-            $notifiable->notify($notification);
-            
-            if ($this->shouldLogErrors()) {
-                Log::debug('NotifyCord message sent successfully');
-            }
-            
-            return true;
-            
+
         } catch (\Exception $e) {
             if ($this->shouldLogErrors()) {
                 $logChannel = $this->config('log_channel', 'stack');
                 $logFile = $this->config('log_file');
-                
+
                 if ($logFile) {
                     Log::channel($logChannel)->error('Discord notification failed: ' . $e->getMessage(), [
                         'exception' => $e,
-                        'webhook' => $this->maskWebhookUrl($webhookUrl),
+                        'webhook' => $this->maskWebhookUrl($webhookUrl ?? 'N/A'), //Handle null webhookUrl
                     ]);
-                    
+
                     // Özel log dosyasına da yazma
                     file_put_contents(
                         $logFile, 
                         '[' . date('Y-m-d H:i:s') . '] Discord notification failed: ' . $e->getMessage() . 
-                        ' Webhook: ' . $this->maskWebhookUrl($webhookUrl) . "\n", 
+                        ' Webhook: ' . $this->maskWebhookUrl($webhookUrl ?? 'N/A') . "\n", 
                         FILE_APPEND
                     );
                 } else {
                     Log::channel($logChannel)->error('Discord notification failed: ' . $e->getMessage(), [
                         'exception' => $e,
-                        'webhook' => $this->maskWebhookUrl($webhookUrl),
+                        'webhook' => $this->maskWebhookUrl($webhookUrl ?? 'N/A'), //Handle null webhookUrl
+
                     ]);
                 }
             }
-            
+
             return false;
         }
     }
-    
+
     /**
      * Mask the webhook URL for security when logging.
      *
@@ -297,17 +338,17 @@ class NotifyCordManager
     protected function maskWebhookUrl($webhookUrl)
     {
         if (!$webhookUrl) return 'null';
-        
+
         $parts = explode('/', $webhookUrl);
         $lastPart = end($parts);
-        
+
         if (strlen($lastPart) > 8) {
             return str_replace($lastPart, substr($lastPart, 0, 4) . '...' . substr($lastPart, -4), $webhookUrl);
         }
-        
+
         return 'https://discord.com/api/webhooks/***';
     }
-    
+
     /**
      * Send a success message with a predefined style.
      *
@@ -325,7 +366,7 @@ class NotifyCordManager
             MessagePresets::success($title, $message, $fields)
         );
     }
-    
+
     /**
      * Send an error message with a predefined style.
      *
@@ -343,7 +384,7 @@ class NotifyCordManager
             MessagePresets::error($title, $message, $fields)
         );
     }
-    
+
     /**
      * Send a warning message with a predefined style.
      *
@@ -361,7 +402,7 @@ class NotifyCordManager
             MessagePresets::warning($title, $message, $fields)
         );
     }
-    
+
     /**
      * Send an info message with a predefined style.
      *
@@ -379,7 +420,7 @@ class NotifyCordManager
             MessagePresets::info($title, $message, $fields)
         );
     }
-    
+
     /**
      * Send a server alert with a predefined style (for monitoring systems).
      *
@@ -397,7 +438,7 @@ class NotifyCordManager
             MessagePresets::serverAlert($title, $message, $metrics)
         );
     }
-    
+
     /**
      * Send a user activity notification with a predefined style.
      *
@@ -429,14 +470,14 @@ class NotifyCordManager
     {
         $channelId = $this->config('channels.exceptions') 
             ?? $this->config('default_channel_id');
-            
+
         $fields = [
             'Message' => $exception->getMessage(),
             'File' => $exception->getFile(),
             'Line' => $exception->getLine(),
             'Code' => $exception->getCode(),
         ];
-        
+
         $trace = array_slice($exception->getTrace(), 0, 3);
         $traceString = '';
         foreach ($trace as $i => $step) {
@@ -458,7 +499,7 @@ class NotifyCordManager
                          ->description($exception->getMessage())
                          ->color('#e74c3c')
                          ->timestamp();
-                    
+
                     foreach ($fields as $name => $value) {
                         $embed->field($name, $value, false);
                     }
@@ -485,7 +526,7 @@ class NotifyCordManager
             'Deployed by' => $deployer,
             'Date' => date('Y-m-d H:i:s'),
         ];
-        
+
         $fields = array_merge($fields, $additionalFields);
 
         return $this->sendMessage(
@@ -497,7 +538,7 @@ class NotifyCordManager
                          ->description("Application has been successfully deployed to {$environment}")
                          ->color('#3498db')
                          ->timestamp();
-                    
+
                     foreach ($fields as $name => $value) {
                         $embed->field($name, (string)$value, true);
                     }
