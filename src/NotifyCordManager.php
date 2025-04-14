@@ -118,17 +118,6 @@ class NotifyCordManager
         return $message;
     }
 
-    /**
-     * Set the channel ID for the next message.
-     *
-     * @param string $channelId
-     * @return $this
-     */
-    public function channel($channelId)
-    {
-        $this->channelId = $channelId;
-        return $this;
-    }
 
     /**
      * Set channel ID or get Discord notification channel.
