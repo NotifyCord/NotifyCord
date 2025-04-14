@@ -239,10 +239,22 @@ class NotifyCordManager
         try {
             $webhookUrl = $webhookUrl ?: $this->getDefaultWebhook();
             
+            if ($this->shouldLogErrors()) {
+                Log::debug('NotifyCord attempting to send message', [
+                    'webhook' => $this->maskWebhookUrl($webhookUrl),
+                    'has_callback' => !is_null($callback),
+                    'message_length' => strlen($message)
+                ]);
+            }
+            
             $notifiable = new WebhookNotifiable($webhookUrl);
             $notification = new SimpleDiscordNotification($message, $callback);
             
             $notifiable->notify($notification);
+            
+            if ($this->shouldLogErrors()) {
+                Log::debug('NotifyCord message sent successfully');
+            }
             
             return true;
             
