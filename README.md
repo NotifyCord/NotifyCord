@@ -200,7 +200,7 @@ You can also use NotifyCord directly without a notification class:
 ```php
 use NotifyCord\NotifyCord\Facades\NotifyCord;
 
-// Send to the default webhook configured in .env
+// Send to a channel using the bot token configured in .env
 NotifyCord::channel()->send(null, new class {
     public function toDiscord() {
         return NotifyCord::message('Direct message using NotifyCord!')
@@ -212,17 +212,17 @@ NotifyCord::channel()->send(null, new class {
     }
 });
 
-// Or specify a custom webhook URL
-$webhookUrl = 'https://discord.com/api/webhooks/custom/webhook';
+// Or specify a specific channel ID
+$channelId = '123456789012345678';
 $notifiable = new class {
     public function routeNotificationForDiscord() {
-        return $webhookUrl;
+        return $channelId;
     }
 };
 
 NotifyCord::channel()->send($notifiable, new class {
     public function toDiscord() {
-        return NotifyCord::message('Custom webhook message');
+        return NotifyCord::message('Message to specific channel');
     }
 });
 ```
