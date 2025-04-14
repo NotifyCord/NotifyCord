@@ -388,4 +388,89 @@ class NotifyCordManager
             MessagePresets::userActivity($title, $message, $username, $userAvatar, $activityDetails)
         );
     }
+
+    /**
+     * Send an exception notification with stack trace.
+     *
+     * @param \Throwable $exception
+     * @param string|null $webhookUrl
+     * @return bool
+     */
+    public function exception(\Throwable $exception, $webhookUrl = null)
+    {
+        $fields = [
+            'Message' => $exception->getMessage(),
+            'File' => $exception->getFile(),
+            'Line' => $exception->getLine(),
+            'Code' => $exception->getCode(),
+        ];
+        
+        $trace = array_slice($exception->getTrace(), 0, 3);
+        $traceString = '';
+        foreach ($trace as $i => $step) {
+            $file = $step['file'] ?? 'unknown';
+            $line = $step['line'] ?? 'unknown';
+            $function = $step['function'] ?? 'unknown';
+            $class = $step['class'] ?? '';
+            $type = $step['type'] ?? '';
+            $traceString .= "#{$i} {$file}({$line}): {$class}{$type}{$function}()\n";
+        }
+        $fields['Stack Trace'] = "```\n{$traceString}```";
+
+        return $this->sendMessage(
+            '',
+            $webhookUrl,
+            function($message) use ($exception, $fields) {
+                $message->embed(function($embed) use ($exception, $fields) {
+                    $embed->title('🚨 Exception: ' . get_class($exception))
+                         ->description($exception->getMessage())
+                         ->color('#e74c3c')
+                         ->timestamp();
+                    
+                    foreach ($fields as $name => $value) {
+                        $embed->field($name, $value, false);
+                    }
+                });
+            }
+        );
+    }
+
+    /**
+     * Send a deployment notification.
+     *
+     * @param string $environment
+     * @param string $version
+     * @param string $deployer
+     * @param array $additionalFields
+     * @param string|null $webhookUrl
+     * @return bool
+     */
+    public function deployment($environment, $version, $deployer, array $additionalFields = [], $webhookUrl = null)
+    {
+        $fields = [
+            'Environment' => $environment,
+            'Version' => $version,
+            'Deployed by' => $deployer,
+            'Date' => date('Y-m-d H:i:s'),
+        ];
+        
+        $fields = array_merge($fields, $additionalFields);
+
+        return $this->sendMessage(
+            '',
+            $webhookUrl,
+            function($message) use ($environment, $fields) {
+                $message->embed(function($embed) use ($environment, $fields) {
+                    $embed->title('🚀 Deployment Completed')
+                         ->description("Application has been successfully deployed to {$environment}")
+                         ->color('#3498db')
+                         ->timestamp();
+                    
+                    foreach ($fields as $name => $value) {
+                        $embed->field($name, (string)$value, true);
+                    }
+                });
+            }
+        );
+    }
 }

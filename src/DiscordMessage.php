@@ -268,7 +268,15 @@ class DiscordMessage implements JsonSerializable
         }
 
         if (! empty($this->components)) {
-            $data['components'] = $this->components;
+            // Make sure components are properly structured in action rows
+            $data['components'] = array_map(function($row) {
+                return [
+                    'type' => 1,
+                    'components' => array_map(function($button) {
+                        return array_merge(['type' => 2], $button);
+                    }, $row['components'] ?? [])
+                ];
+            }, $this->components);
         }
 
         if (! empty($this->username)) {
