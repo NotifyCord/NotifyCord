@@ -24,7 +24,6 @@ NotifyCord is a powerful and flexible package for sending Discord notifications 
 ## ✨ Features
 
 - 🔌 Seamless integration with Laravel's Notification system
-- 🤖 Support for bot-based messaging (to channels and users)
 - 🔗 Support for webhook-based notifications
 - 📋 Rich embed message support (title, description, fields, colors, etc.)
 - 🔘 Discord components support (buttons, action rows)
@@ -80,7 +79,7 @@ This will create a `config/notifycord.php` configuration file in your applicatio
 ```php
 return [
     'default_webhook' => env('DISCORD_WEBHOOK_URL'),
-    'bot_token' => env('DISCORD_BOT_TOKEN'),
+    // 'bot_token' => env('DISCORD_BOT_TOKEN'),  // Not used in webhook-only mode
     'retry_on_rate_limit' => true,
     'retry_on_failure' => true,
     'max_retries' => 3,
@@ -95,12 +94,6 @@ return [
 ### Environment Configuration
 
 Add the following to your `.env` file:
-
-```
-DISCORD_BOT_TOKEN=your-bot-token  # Your Discord bot token from Discord Developer Portal
-```
-
-If you still want to use webhooks as a fallback or alternative, you can also add:
 
 ```
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/webhook-id/webhook-token
@@ -178,11 +171,8 @@ class User extends Authenticatable
     
     public function routeNotificationForDiscord()
     {
-        // Return a Discord channel ID when using bot token
-        return '123456789012345678';
-        
-        // Or return a webhook URL if you prefer that method
-        // return 'https://discord.com/api/webhooks/your-webhook-id/your-webhook-token';
+        // Return your Discord webhook URL
+        return 'https://discord.com/api/webhooks/your-webhook-id/your-webhook-token';
     }
 }
 ```
@@ -200,7 +190,7 @@ You can also use NotifyCord directly without a notification class:
 ```php
 use NotifyCord\NotifyCord\Facades\NotifyCord;
 
-// Send to a channel using the bot token configured in .env
+// Send to the default webhook configured in .env
 NotifyCord::channel()->send(null, new class {
     public function toDiscord() {
         return NotifyCord::message('Direct message using NotifyCord!')
@@ -212,17 +202,17 @@ NotifyCord::channel()->send(null, new class {
     }
 });
 
-// Or specify a specific channel ID
-$channelId = '123456789012345678';
+// Or specify a custom webhook URL
+$webhookUrl = 'https://discord.com/api/webhooks/custom/webhook';
 $notifiable = new class {
     public function routeNotificationForDiscord() {
-        return $channelId;
+        return $webhookUrl;
     }
 };
 
 NotifyCord::channel()->send($notifiable, new class {
     public function toDiscord() {
-        return NotifyCord::message('Message to specific channel');
+        return NotifyCord::message('Custom webhook message');
     }
 });
 ```
